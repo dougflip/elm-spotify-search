@@ -2,8 +2,8 @@ module SpotifySearch where
 
 import Html exposing (..)
 import Html.Attributes exposing (id, type', for, value, class, placeholder)
-import Html.Events exposing (onClick)
-import Json.Decode as Json
+import Html.Events exposing (onWithOptions)
+import Json.Decode
 import StartApp.Simple exposing (start)
 
 main =
@@ -25,7 +25,12 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
     form
-        []
+        [ onWithOptions
+            "submit"
+            { preventDefault = True, stopPropagation = True }
+            (Json.Decode.succeed Nothing)
+            (\_ -> Signal.message address Submit)
+        ]
         [ input
             [ type' "text"
             , placeholder "Search for an album..."
@@ -34,7 +39,10 @@ view address model =
             []
         , button
             [ type' "button"
-            , onClick address Submit
+            , onWithOptions "click"
+                { preventDefault = True, stopPropagation = True }
+                (Json.Decode.succeed Nothing)
+                (\_ -> Signal.message address Submit)
             ]
             [text "Click to Search"]
         ]
