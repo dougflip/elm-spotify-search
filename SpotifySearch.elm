@@ -2,7 +2,7 @@ module SpotifySearch where
 
 import Html exposing (..)
 import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
-import Html.Events exposing (onWithOptions)
+import Html.Events exposing (on, onWithOptions, targetValue)
 import Json.Decode
 import StartApp.Simple exposing (start)
 
@@ -14,29 +14,36 @@ type alias Model =
     { query: String }
 
 -- UPDATE
-type Action = Submit
+type Action =
+    Submit | UpdateQuery String
 
 update : Action -> Model -> Model
 update action model =
   case action of
     Submit -> { model | query = "SUBMITTED!!!"  }
+    UpdateQuery text -> { model | query = text }
 
 -- VIEW
 view : Signal.Address Action -> Model -> Html
 view address model =
-    form
-        [ submitForm address ]
+    div []
+    [ form [ submitForm address ]
         [ input
             [ type' "text"
             , placeholder "Search for an album..."
             , autofocus True
             , value model.query
+            , on "input" targetValue (Signal.message address << UpdateQuery)
             ]
             []
         , button
             [ type' "button" ]
             [text "Click to Search"]
         ]
+    , div []
+        [ text model.query ]
+    ]
+
 
 submitForm : Signal.Address Action -> Html.Attribute
 submitForm address =
