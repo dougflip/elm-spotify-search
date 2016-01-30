@@ -7,11 +7,13 @@ import Json.Decode
 import StartApp.Simple exposing (start)
 
 main =
-    start { model = { query = "" }, update = update, view = view }
+    start { model = { query = "", submittedQuery = "" }, update = update, view = view }
 
 -- MODEL
 type alias Model =
-    { query: String }
+    { query: String
+    , submittedQuery: String
+    }
 
 -- UPDATE
 type Action =
@@ -20,7 +22,7 @@ type Action =
 update : Action -> Model -> Model
 update action model =
   case action of
-    Submit -> { model | query = "SUBMITTED!!!"  }
+    Submit -> { model | query = "", submittedQuery = model.query  }
     UpdateQuery text -> { model | query = text }
 
 -- VIEW
@@ -41,9 +43,8 @@ view address model =
             [text "Click to Search"]
         ]
     , div []
-        [ text model.query ]
+        [ text model.submittedQuery ]
     ]
-
 
 submitForm : Signal.Address Action -> Html.Attribute
 submitForm address =
