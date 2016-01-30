@@ -25,12 +25,7 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
     form
-        [ onWithOptions
-            "submit"
-            { preventDefault = True, stopPropagation = True }
-            (Json.Decode.succeed Nothing)
-            (\_ -> Signal.message address Submit)
-        ]
+        [ submitForm address ]
         [ input
             [ type' "text"
             , placeholder "Search for an album..."
@@ -38,11 +33,18 @@ view address model =
             ]
             []
         , button
-            [ type' "button"
-            , onWithOptions "click"
-                { preventDefault = True, stopPropagation = True }
-                (Json.Decode.succeed Nothing)
-                (\_ -> Signal.message address Submit)
-            ]
+            [ type' "button" ]
             [text "Click to Search"]
         ]
+
+submitForm : Signal.Address Action -> Html.Attribute
+submitForm address =
+    preventDefaultOf "submit" address Submit
+
+preventDefaultOf : String -> Signal.Address Action -> Action -> Html.Attribute
+preventDefaultOf evt address action =
+    onWithOptions
+        evt
+        { preventDefault = True, stopPropagation = True }
+        (Json.Decode.succeed Nothing)
+        (\_ -> Signal.message address action)
