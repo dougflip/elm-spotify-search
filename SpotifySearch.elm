@@ -1,7 +1,7 @@
 module SpotifySearch where
 
 import Html exposing (..)
-import Html.Attributes exposing (id, type', for, value, class, placeholder)
+import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
 import Html.Events exposing (onWithOptions)
 import Json.Decode
 import StartApp.Simple exposing (start)
@@ -29,6 +29,7 @@ view address model =
         [ input
             [ type' "text"
             , placeholder "Search for an album..."
+            , autofocus True
             , value model.query
             ]
             []
