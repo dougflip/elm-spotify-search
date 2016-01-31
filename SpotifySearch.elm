@@ -3,11 +3,31 @@ module SpotifySearch where
 import Html exposing (..)
 import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
 import Html.Events exposing (on, onWithOptions, targetValue)
+import Effects exposing (Effects, Never)
+import Task
 import Json.Decode
-import StartApp.Simple exposing (start)
+import StartApp
+
+app =
+    StartApp.start
+        { init = init
+        , update = update
+        , view = view
+        , inputs = []
+        }
 
 main =
-    start { model = { query = "", submittedQuery = "" }, update = update, view = view }
+    app.html
+
+port tasks : Signal (Task.Task Never ())
+port tasks =
+  app.tasks
+
+init : (Model, Effects Action)
+init =
+    ({ query = "", submittedQuery = ""}
+    , Effects.none
+    )
 
 -- MODEL
 type alias Model =
@@ -19,11 +39,11 @@ type alias Model =
 type Action =
     Submit | UpdateQuery String
 
-update : Action -> Model -> Model
+update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    Submit -> { model | query = "", submittedQuery = model.query  }
-    UpdateQuery text -> { model | query = text }
+    Submit -> ({ model | query = "", submittedQuery = model.query  }, Effects.none)
+    UpdateQuery text -> ({ model | query = text }, Effects.none)
 
 -- VIEW
 view : Signal.Address Action -> Model -> Html
