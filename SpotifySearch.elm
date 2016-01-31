@@ -4,7 +4,9 @@ import Html exposing (..)
 import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
 import Html.Events exposing (on, onWithOptions, targetValue)
 import Effects exposing (Effects, Never)
-import Json.Decode
+import Json.Decode as Json
+import Http
+import Task
 
 init : (Model, Effects Action)
 init =
@@ -20,13 +22,14 @@ type alias Model =
 
 -- UPDATE
 type Action =
-    Submit | UpdateQuery String
+    Submit | UpdateQuery String | Results (Maybe String)
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    Submit -> ({ model | query = "", submittedQuery = model.query  }, Effects.none)
+    Submit -> ({ model | query = "", submittedQuery = model.query  }, fetchAlbum model.query)
     UpdateQuery text -> ({ model | query = text }, Effects.none)
+    Results albums -> (model, Effects.none)
 
 -- VIEW
 view : Signal.Address Action -> Model -> Html
@@ -58,5 +61,24 @@ preventDefaultOf evt address action =
     onWithOptions
         evt
         { preventDefault = True, stopPropagation = True }
-        (Json.Decode.succeed Nothing)
+        (Json.succeed Nothing)
         (\_ -> Signal.message address action)
+
+-- EFFECTS
+fetchAlbum : String -> Effects Action
+fetchAlbum query =
+  Http.get decodeUrl (albumUrl query)
+    |> Task.toMaybe
+    |> Task.map Results
+    |> Effects.task
+
+albumUrl : String -> String
+albumUrl query =
+  Http.url "https://api.spotify.com/v1/search"
+    [ ("q", query)
+    , ("type", "album")
+    ]
+
+decodeUrl : Json.Decoder String
+decodeUrl =
+  Json.at ["albums", "items"] Json.string
