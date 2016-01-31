@@ -9,7 +9,7 @@ elm package install
 ## Build
 
 ```
-elm make SpotifySearch.elm --output app.js
+elm make Main.elm --output app.js
 ```
 
 ## Run

@@ -4,24 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
 import Html.Events exposing (on, onWithOptions, targetValue)
 import Effects exposing (Effects, Never)
-import Task
 import Json.Decode
-import StartApp
-
-app =
-    StartApp.start
-        { init = init
-        , update = update
-        , view = view
-        , inputs = []
-        }
-
-main =
-    app.html
-
-port tasks : Signal (Task.Task Never ())
-port tasks =
-  app.tasks
 
 init : (Model, Effects Action)
 init =
