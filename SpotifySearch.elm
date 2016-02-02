@@ -10,7 +10,7 @@ import Task
 
 init : (Model, Effects Action)
 init =
-    ({ query = "", submittedQuery = ""}
+    ({ query = "", submittedQuery = "", albumUrls = "" }
     , Effects.none
     )
 
@@ -18,6 +18,7 @@ init =
 type alias Model =
     { query: String
     , submittedQuery: String
+    , albumUrls: String
     }
 
 -- UPDATE
@@ -29,7 +30,10 @@ update action model =
   case action of
     Submit -> ({ model | query = "", submittedQuery = model.query  }, fetchAlbum model.query)
     UpdateQuery text -> ({ model | query = text }, Effects.none)
-    Results albums -> (model, Effects.none)
+    Results maybeAlbums ->
+        ({ model | albumUrls = Maybe.withDefault "I guess there was an error" maybeAlbums }
+        , Effects.none
+        )
 
 -- VIEW
 view : Signal.Address Action -> Model -> Html
@@ -50,6 +54,8 @@ view address model =
         ]
     , div []
         [ text model.submittedQuery ]
+    , div []
+        [ text ("Albums: " ++ model.albumUrls) ]
     ]
 
 submitForm : Signal.Address Action -> Html.Attribute
@@ -81,4 +87,4 @@ albumUrl query =
 
 decodeUrl : Json.Decoder String
 decodeUrl =
-  Json.at ["albums", "items"] Json.string
+  Json.at ["albums", "href"] Json.string
