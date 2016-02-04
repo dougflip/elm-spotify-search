@@ -6,16 +6,10 @@ A (very basic) spotify search written in [Elm](http://elm-lang.org/).
 elm package install
 ```
 
-## Build
+## Debug
 
 ```
-elm make Main.elm --output app.js
+elm reactor
 ```
 
-## Run
-
-```
-open ./index.html
-```
-
-Or just manually open `index.html` in your browser
+[http://localhost:8000/Main.elm](http://localhost:8000/Main.elm)
