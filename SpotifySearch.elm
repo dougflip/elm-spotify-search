@@ -1,7 +1,7 @@
 module SpotifySearch where
 
 import Html exposing (..)
-import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
+import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus, src)
 import Html.Events exposing (on, onWithOptions, targetValue)
 import Effects exposing (Effects, Never)
 import String exposing (join)
@@ -56,7 +56,7 @@ view address model =
     , div []
         [ text model.submittedQuery ]
     , div []
-        [ text ("Albums: " ++ (join ", " model.albumUrls)) ]
+        (List.map (\x -> img [src x] []) model.albumUrls)
     ]
 
 submitForm : Signal.Address Action -> Html.Attribute
@@ -94,20 +94,7 @@ decodeImageUrl =
 decodeAlbumImage : Json.Decoder String
 decodeAlbumImage =
     Json.at ["images"] (Json.map (\xs -> Maybe.withDefault "" (List.head xs)) (Json.list decodeImageUrl))
-    -- Json.at ["images"] (Json.map (\xs -> List.head xs) (Json.list decodeImageUrl))
---
+
 decodeAllImages : Json.Decoder (List String)
 decodeAllImages =
     Json.at ["albums", "items"] (Json.list decodeAlbumImage)
-
-decodeAlbumType : Json.Decoder String
-decodeAlbumType =
-    Json.at ["album_type"] Json.string
-
-decodeAlbumTypeList : Json.Decoder (List String)
-decodeAlbumTypeList =
-    Json.at ["albums", "items"] (Json.list decodeAlbumType)
-
-decodeHref : Json.Decoder (List String)
-decodeHref =
-    Json.at ["albums", "href"] (Json.map (\x -> [x]) Json.string)
