@@ -74,7 +74,7 @@ preventDefaultOf evt address action =
 -- EFFECTS
 fetchAlbum : String -> Effects Action
 fetchAlbum query =
-  Http.get decodeHref (albumUrl query)
+  Http.get decodeAlbumTypeList (albumUrl query)
     |> Task.toMaybe
     |> Task.map Results
     |> Effects.task
@@ -113,9 +113,9 @@ albumUrl query =
 -- decodeAlbumType =
 --     Json.at ["album_type"] Json.string
 --
--- decodeAlbumTypeList : Json.Decoder (List String)
--- decodeAlbumTypeList =
---     Json.at ["albums", "item"] Json.Decoder (List String)
+decodeAlbumTypeList : Json.Decoder (List String)
+decodeAlbumTypeList =
+    Json.at ["albums", "items"] (Json.list (Json.at ["album_type"] Json.string))
 
 decodeHref : Json.Decoder (List String)
 decodeHref =
