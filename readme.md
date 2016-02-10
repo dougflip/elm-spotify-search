@@ -6,7 +6,7 @@ A (very basic) spotify search written in [Elm](http://elm-lang.org/).
 elm package install
 ```
 
-## Debug
+## Run/Debug
 
 ```
 elm reactor

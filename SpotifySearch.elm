@@ -49,15 +49,16 @@ view address model =
             , on "input" targetValue (Signal.message address << UpdateQuery)
             ]
             []
-        , button
-            [ type' "button" ]
-            [text "Click to Search"]
         ]
     , div []
         [ text model.submittedQuery ]
     , div []
-        (List.map (\x -> img [src x] []) model.albumUrls)
+        (renderAlbumImages model.albumUrls)
     ]
+
+renderAlbumImages : List String -> List Html
+renderAlbumImages =
+    List.map (\x -> img [src x] [])
 
 submitForm : Signal.Address Action -> Html.Attribute
 submitForm address =
@@ -91,10 +92,14 @@ decodeImageUrl : Json.Decoder String
 decodeImageUrl =
     Json.at ["url"] Json.string
 
+pluckFirstImage : List String -> String
+pluckFirstImage =
+    Maybe.withDefault "" << List.head
+
 decodeAlbumImage : Json.Decoder String
 decodeAlbumImage =
-    Json.at ["images"] (Json.map (\xs -> Maybe.withDefault "" (List.head xs)) (Json.list decodeImageUrl))
+    Json.at ["images"] <| Json.map pluckFirstImage <| Json.list decodeImageUrl
 
 decodeAllImages : Json.Decoder (List String)
 decodeAllImages =
-    Json.at ["albums", "items"] (Json.list decodeAlbumImage)
+    Json.at ["albums", "items"] <| Json.list decodeAlbumImage
