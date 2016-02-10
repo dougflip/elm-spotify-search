@@ -6,7 +6,7 @@ import Html.Events exposing (on, onWithOptions, targetValue)
 import Effects exposing (Effects, Never)
 import String exposing (join)
 import Json.Decode as Json
-import Http
+import AlbumSearchService
 import Task
 
 
@@ -42,7 +42,7 @@ update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
     Submit ->
-      ( { model | query = "", submittedQuery = model.query }, fetchAlbum model.query )
+      ( { model | query = "", submittedQuery = model.query }, fetchAlbums model.query )
 
     UpdateQuery text ->
       ( { model | query = text }, Effects.none )
@@ -104,42 +104,9 @@ preventDefaultOf evt address action =
 -- EFFECTS
 
 
-fetchAlbum : String -> Effects Action
-fetchAlbum query =
-  Http.get decodeAllImages (albumUrl query)
+fetchAlbums : String -> Effects Action
+fetchAlbums query =
+  AlbumSearchService.fetchAlbums query
     |> Task.toMaybe
     |> Task.map Results
     |> Effects.task
-
-
-albumUrl : String -> String
-albumUrl query =
-  Http.url
-    "https://api.spotify.com/v1/search"
-    [ ( "q", query )
-    , ( "type", "album" )
-    ]
-
-
-
--- JSON Decoding
-
-
-decodeImageUrl : Json.Decoder String
-decodeImageUrl =
-  Json.at [ "url" ] Json.string
-
-
-pluckFirstImage : List String -> String
-pluckFirstImage =
-  Maybe.withDefault "" << List.head
-
-
-decodeAlbumImage : Json.Decoder String
-decodeAlbumImage =
-  Json.at [ "images" ] <| Json.map pluckFirstImage <| Json.list decodeImageUrl
-
-
-decodeAllImages : Json.Decoder (List String)
-decodeAllImages =
-  Json.at [ "albums", "items" ] <| Json.list decodeAlbumImage
