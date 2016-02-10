@@ -74,7 +74,7 @@ preventDefaultOf evt address action =
 -- EFFECTS
 fetchAlbum : String -> Effects Action
 fetchAlbum query =
-  Http.get decodeAlbumTypeList (albumUrl query)
+  Http.get decodeAllImages (albumUrl query)
     |> Task.toMaybe
     |> Task.map Results
     |> Effects.task
@@ -86,33 +86,19 @@ albumUrl query =
     , ("type", "album")
     ]
 
--- type alias Image =
---     { url: String }
---
--- decodeUrl : Json.Decode String
--- decodeUrl =
---     Json.at ["url"] Json.string
---
--- decodeImage : Json.Decoder String
--- decodeImage =
---     Json.at ["url"] Json.string
---
--- decodeImages : Json.Decoder (List String)
--- decodeImages =
---     Json.at ["images"] (Json.list decodeImage)
---
--- decodeAlbumImages : Json.Decoder (List String)
--- decodeAlbumImages =
---     Json.at ["albums", "items"] (Json.list decodeImages)
---
--- decodeAlbumName : Json.Decoder String
--- decodeAlbumName =
---     Json.at ["name"] Json.string
+-- JSON Decoding
+decodeImageUrl : Json.Decoder String
+decodeImageUrl =
+    Json.at ["url"] Json.string
 
--- decodeAlbumType : Json.Decoder String
--- decodeAlbumType =
---     Json.at ["album_type"] Json.string
+decodeAlbumImage : Json.Decoder String
+decodeAlbumImage =
+    Json.at ["images"] (Json.map (\xs -> Maybe.withDefault "" (List.head xs)) (Json.list decodeImageUrl))
+    -- Json.at ["images"] (Json.map (\xs -> List.head xs) (Json.list decodeImageUrl))
 --
+decodeAllImages : Json.Decoder (List String)
+decodeAllImages =
+    Json.at ["albums", "items"] (Json.list decodeAlbumImage)
 
 decodeAlbumType : Json.Decoder String
 decodeAlbumType =
