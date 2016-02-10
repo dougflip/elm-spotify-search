@@ -113,9 +113,14 @@ albumUrl query =
 -- decodeAlbumType =
 --     Json.at ["album_type"] Json.string
 --
+
+decodeAlbumType : Json.Decoder String
+decodeAlbumType =
+    Json.at ["album_type"] Json.string
+
 decodeAlbumTypeList : Json.Decoder (List String)
 decodeAlbumTypeList =
-    Json.at ["albums", "items"] (Json.list (Json.at ["album_type"] Json.string))
+    Json.at ["albums", "items"] (Json.list decodeAlbumType)
 
 decodeHref : Json.Decoder (List String)
 decodeHref =
