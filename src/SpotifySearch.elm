@@ -12,7 +12,7 @@ import Task
 
 init : ( Model, Effects Action )
 init =
-  ( { query = "", submittedQuery = "", albumUrls = [ "" ] }
+  ( { query = "", submittedQuery = "", albumUrls = [ ] }
   , Effects.none
   )
 
@@ -60,11 +60,12 @@ update action model =
 view : Signal.Address Action -> Model -> Html
 view address model =
   div
-    []
+    [ class "spotify-search-container" ]
     [ form
-        [ submitForm address ]
+        [ submitForm address, class "spotify-search-form" ]
         [ input
-            [ type' "text"
+            [ class "spotify-search-form-input"
+            , type' "text"
             , placeholder "Search for an album..."
             , autofocus True
             , value model.query
@@ -73,10 +74,10 @@ view address model =
             []
         ]
     , div
-        []
+        [ class "spotify-search-submitted-query" ]
         [ text model.submittedQuery ]
     , div
-        []
+        [ class "spotify-search-album-list" ]
         (renderAlbumImages model.albumUrls)
     ]
 
