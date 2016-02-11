@@ -1,4 +1,4 @@
-module SpotifySearch (..) where
+module SpotifySearch (init, update, view) where
 
 import Html exposing (..)
 import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus, src)
