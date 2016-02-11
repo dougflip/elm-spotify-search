@@ -5,7 +5,7 @@ import AlbumSearchResults
 import String
 import Task
 import Html exposing (..)
-import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
+import Html.Attributes exposing (id, type', for, value, class, classList, placeholder, autofocus)
 import Html.Events exposing (on, onWithOptions, targetValue)
 import Effects exposing (Effects, Never)
 import Json.Decode as Json
@@ -65,7 +65,10 @@ view address model =
     [ form
         [ submitForm address, class "spotify-search-form" ]
         [ input
-            [ class (getSearchInputCss model.submittedQuery)
+            [ classList
+                [ ( "spotify-search-form-input", True )
+                , ( "is-submitted", not <| String.isEmpty model.submittedQuery )
+                ]
             , type' "text"
             , placeholder "Search for an album..."
             , autofocus True
@@ -76,18 +79,6 @@ view address model =
         ]
     , AlbumSearchResults.view model.submittedQuery model.albumUrls
     ]
-
-
-getSearchInputCss : String -> String
-getSearchInputCss submittedQuery =
-  let
-    baseCss =
-      "spotify-search-form-input"
-  in
-    if String.isEmpty submittedQuery then
-      baseCss
-    else
-      baseCss ++ " is-submitted"
 
 
 submitForm : Signal.Address Action -> Html.Attribute
