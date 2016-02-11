@@ -17,18 +17,24 @@ body, input {
 }
 
 .spotify-search-form-input {
-    width: 100%;
+    display: block;
+    margin: auto;
+    width: 50%;
     padding: 5px;
     border-radius: 5px;
     font-size: 2rem;
     border: 2px solid #ccc;
 
+    position: relative;
+    z-index: 2;
+
     transform: translateY(25vh);
-    transition: transform .4s;
+    transition: transform 0.4s, width 0.4s;
 }
 
 .spotify-search-form-input.is-submitted {
     transform: translateY(0);
+    width: 75%;
 }
 
 .spotify-search-form-input:focus {

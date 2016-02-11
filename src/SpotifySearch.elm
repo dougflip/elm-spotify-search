@@ -1,13 +1,14 @@
 module SpotifySearch (init, update, view) where
 
+import AlbumSearchService
+import AlbumSearchResults
+import String
+import Task
 import Html exposing (..)
-import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus, src)
+import Html.Attributes exposing (id, type', for, value, class, placeholder, autofocus)
 import Html.Events exposing (on, onWithOptions, targetValue)
 import Effects exposing (Effects, Never)
-import String exposing (join)
 import Json.Decode as Json
-import AlbumSearchService
-import Task
 
 
 init : ( Model, Effects Action )
@@ -73,12 +74,7 @@ view address model =
             ]
             []
         ]
-    , div
-        [ class "spotify-search-submitted-query" ]
-        [ text model.submittedQuery ]
-    , div
-        [ class "spotify-search-album-list" ]
-        (renderAlbumImages model.albumUrls)
+    , AlbumSearchResults.view model.submittedQuery model.albumUrls
     ]
 
 
@@ -92,11 +88,6 @@ getSearchInputCss submittedQuery =
       baseCss
     else
       baseCss ++ " is-submitted"
-
-
-renderAlbumImages : List String -> List Html
-renderAlbumImages =
-  List.map (\x -> img [ src x ] [])
 
 
 submitForm : Signal.Address Action -> Html.Attribute
