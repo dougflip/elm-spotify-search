@@ -22,6 +22,13 @@ body, input {
     border-radius: 5px;
     font-size: 2rem;
     border: 2px solid #ccc;
+
+    transform: translateY(25vh);
+    transition: transform .4s;
+}
+
+.spotify-search-form-input.is-submitted {
+    transform: translateY(0);
 }
 
 .spotify-search-form-input:focus {
@@ -45,4 +52,12 @@ body, input {
     width: 20%;
     height: 20%;
     padding: 5px;
+
+    transform: scale(1.0, 1.0);
+    transition: transform .3s;
+}
+
+.spotify-search-album-list img:hover {
+    transform: scale(1.2, 1.2);
+    z-index: 1;
 }

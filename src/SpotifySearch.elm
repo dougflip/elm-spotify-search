@@ -12,7 +12,7 @@ import Task
 
 init : ( Model, Effects Action )
 init =
-  ( { query = "", submittedQuery = "", albumUrls = [ ] }
+  ( { query = "", submittedQuery = "", albumUrls = [] }
   , Effects.none
   )
 
@@ -64,7 +64,7 @@ view address model =
     [ form
         [ submitForm address, class "spotify-search-form" ]
         [ input
-            [ class "spotify-search-form-input"
+            [ class (getSearchInputCss model.submittedQuery)
             , type' "text"
             , placeholder "Search for an album..."
             , autofocus True
@@ -80,6 +80,18 @@ view address model =
         [ class "spotify-search-album-list" ]
         (renderAlbumImages model.albumUrls)
     ]
+
+
+getSearchInputCss : String -> String
+getSearchInputCss submittedQuery =
+  let
+    baseCss =
+      "spotify-search-form-input"
+  in
+    if String.isEmpty submittedQuery then
+      baseCss
+    else
+      baseCss ++ " is-submitted"
 
 
 renderAlbumImages : List String -> List Html
