@@ -26,7 +26,7 @@ decodeImageUrl =
 
 pluckFirstImage : List String -> String
 pluckFirstImage =
-  Maybe.withDefault "" << List.head
+  Maybe.withDefault "" << List.head << List.drop 1
 
 
 decodeAlbumImage : Json.Decoder String
