@@ -24,14 +24,14 @@ decodeImageUrl =
   Json.at [ "url" ] Json.string
 
 
-pluckFirstImage : List String -> String
-pluckFirstImage =
+pluckSecondImage : List String -> String
+pluckSecondImage =
   Maybe.withDefault "" << List.head << List.drop 1
 
 
 decodeAlbumImage : Json.Decoder String
 decodeAlbumImage =
-  Json.at [ "images" ] <| Json.map pluckFirstImage <| Json.list decodeImageUrl
+  Json.at [ "images" ] <| Json.map pluckSecondImage <| Json.list decodeImageUrl
 
 
 decodeAllImages : Json.Decoder (List String)
