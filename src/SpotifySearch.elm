@@ -77,7 +77,7 @@ view address model =
             ]
             []
         ]
-    , AlbumSearchResults.view model.submittedQuery model.albumUrls
+    , renderResultsOrEmpty model
     ]
 
 
@@ -93,6 +93,14 @@ preventDefaultOf evt address action =
     { preventDefault = True, stopPropagation = True }
     (Json.succeed Nothing)
     (\_ -> Signal.message address action)
+
+
+renderResultsOrEmpty : Model -> Html
+renderResultsOrEmpty model =
+  if String.isEmpty model.submittedQuery then
+    text ""
+  else
+    AlbumSearchResults.view model.submittedQuery model.albumUrls
 
 
 
