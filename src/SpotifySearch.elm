@@ -1,7 +1,7 @@
 module SpotifySearch (init, update, view) where
 
 import AlbumSearchService
-import AlbumSearchResults
+import AlbumSearchResults exposing (loading, toSearchResult)
 import String
 import Task
 import Html exposing (..)
@@ -13,7 +13,7 @@ import Json.Decode as Json
 
 init : ( Model, Effects Action )
 init =
-  ( { query = "", isSubmitted = False, results = AlbumSearchResults.toSearchResult "" [] }
+  ( { query = "", isSubmitted = False, results = toSearchResult "" [] }
   , Effects.none
   )
 
@@ -43,13 +43,13 @@ update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
     Submit ->
-      ( { model | query = "", isSubmitted = True, results = AlbumSearchResults.loading model.query }, fetchAlbums model.query )
+      ( { model | query = "", isSubmitted = True, results = loading model.query }, fetchAlbums model.query )
 
     UpdateQuery text ->
       ( { model | query = text }, Effects.none )
 
     Results maybeAlbums ->
-      ( { model | results = AlbumSearchResults.toSearchResult model.query (Maybe.withDefault [ "I guess there was an error" ] maybeAlbums) }
+      ( { model | results = toSearchResult model.query <| Maybe.withDefault [ "There was an error - I can handle this better" ] maybeAlbums }
       , Effects.none
       )
 
@@ -77,7 +77,10 @@ view address model =
             ]
             []
         ]
-    , AlbumSearchResults.view model.results
+    , if model.isSubmitted then
+        AlbumSearchResults.view model.results
+      else
+        text ""
     ]
 
 
