@@ -13,7 +13,7 @@ import Json.Decode as Json
 
 init : ( Model, Effects Action )
 init =
-  ( { query = "", submittedQuery = "", albumUrls = [] }
+  ( { query = "", isSubmitted = False, results = AlbumSearchResults.toSearchResult "" [] }
   , Effects.none
   )
 
@@ -24,8 +24,8 @@ init =
 
 type alias Model =
   { query : String
-  , submittedQuery : String
-  , albumUrls : List String
+  , isSubmitted : Bool
+  , results : AlbumSearchResults.Model
   }
 
 
@@ -43,13 +43,13 @@ update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
     Submit ->
-      ( { model | query = "", submittedQuery = model.query }, fetchAlbums model.query )
+      ( { model | query = "", isSubmitted = True, results = AlbumSearchResults.loading model.query }, fetchAlbums model.query )
 
     UpdateQuery text ->
       ( { model | query = text }, Effects.none )
 
     Results maybeAlbums ->
-      ( { model | albumUrls = Maybe.withDefault [ "I guess there was an error" ] maybeAlbums }
+      ( { model | results = AlbumSearchResults.toSearchResult model.query (Maybe.withDefault [ "I guess there was an error" ] maybeAlbums) }
       , Effects.none
       )
 
@@ -67,7 +67,7 @@ view address model =
         [ input
             [ classList
                 [ ( "spotify-search-form-input", True )
-                , ( "is-submitted", not <| String.isEmpty model.submittedQuery )
+                , ( "is-submitted", model.isSubmitted )
                 ]
             , type' "text"
             , placeholder "Search for an album..."
@@ -77,7 +77,7 @@ view address model =
             ]
             []
         ]
-    , renderResultsOrEmpty model
+    , AlbumSearchResults.view model.results
     ]
 
 
@@ -93,14 +93,6 @@ preventDefaultOf evt address action =
     { preventDefault = True, stopPropagation = True }
     (Json.succeed Nothing)
     (\_ -> Signal.message address action)
-
-
-renderResultsOrEmpty : Model -> Html
-renderResultsOrEmpty model =
-  if String.isEmpty model.submittedQuery then
-    text ""
-  else
-    AlbumSearchResults.view model.submittedQuery model.albumUrls
 
 
 

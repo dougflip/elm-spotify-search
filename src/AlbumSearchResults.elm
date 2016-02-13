@@ -1,26 +1,51 @@
-module AlbumSearchResults (view) where
+module AlbumSearchResults (Model, view, loading, toSearchResult) where
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
-view : String -> List String -> Html
-view query images =
+type SearchResult
+  = Loading
+  | Empty
+  | Results (List String)
+
+
+type alias Model =
+  { query : String, results : SearchResult }
+
+
+loading : String -> Model
+loading query =
+  Model query Loading
+
+
+toSearchResult : String -> List String -> Model
+toSearchResult query imageUrls =
+  case imageUrls of
+    [] ->
+      Model query Empty
+
+    _ ->
+      Model query (Results imageUrls)
+
+
+view : Model -> Html
+view { query, results } =
   div
     []
     [ div
         [ class "spotify-search-submitted-query" ]
         [ text query ]
-    , resultsOrEmpty images
+    , case results of
+        Loading ->
+          div [] [ text "Loading..." ]
+
+        Empty ->
+          emptyResults
+
+        Results imageUrls ->
+          albums imageUrls
     ]
-
-
-resultsOrEmpty : List String -> Html
-resultsOrEmpty images =
-  if List.isEmpty images then
-    emptyResults
-  else
-    albums images
 
 
 emptyResults : Html
