@@ -60,7 +60,7 @@ update action model =
 
     Results maybeAlbums ->
       ( { model
-          | results = toSearchResult model.query <| Maybe.withDefault [ "There was an error - I can handle this better" ] maybeAlbums
+          | results = toSearchResult model.results.query <| Maybe.withDefault [ "There was an error - I can handle this better" ] maybeAlbums
         }
       , Effects.none
       )
