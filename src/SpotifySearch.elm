@@ -43,13 +43,25 @@ update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
     Submit ->
-      ( { model | query = "", isSubmitted = True, results = loading model.query }, fetchAlbums model.query )
+      ( { model
+          | query = ""
+          , isSubmitted = True
+          , results = loading model.query
+        }
+      , fetchAlbums model.query
+      )
 
     UpdateQuery text ->
-      ( { model | query = text }, Effects.none )
+      ( { model
+          | query = text
+        }
+      , Effects.none
+      )
 
     Results maybeAlbums ->
-      ( { model | results = toSearchResult model.query <| Maybe.withDefault [ "There was an error - I can handle this better" ] maybeAlbums }
+      ( { model
+          | results = toSearchResult model.query <| Maybe.withDefault [ "There was an error - I can handle this better" ] maybeAlbums
+        }
       , Effects.none
       )
 
