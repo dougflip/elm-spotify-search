@@ -48,9 +48,10 @@ view model =
     div []
         [ Html.form [onSubmit <| Submit model.query]
             [ input [ placeholder "Search an album...", value model.query, onInput SearchInput ] []
-            , div [] [text <| "Search: " ++ model.submittedQuery]
-            , div [] (List.map (\x -> img [src x.imageUrl] []) model.albums)
+            , button [type' "submit"] [text "go"]
             ]
+        , div [] [text <| "Search: " ++ model.submittedQuery]
+        , div [] (List.map (\x -> img [src x.imageUrl] []) model.albums)
         ]
 
 
